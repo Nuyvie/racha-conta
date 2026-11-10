@@ -1,17 +1,17 @@
 import fs from 'node:fs';
 import pc from 'picocolors';
+import { paraCentavos, calcularGorjeta } from '../regras/conta.js';
 
 const texto = fs.readFileSync('src/data/conta.json','utf-8');
 const conta = JSON.parse(texto);
 const subtotal = conta.itens.reduce((total, item) => total + item.preco * item.quantidade, 0);
 const unitpedidos = conta.itens.reduce((total, item) => total + item.quantidade, 0 );
 const acima50 = conta.itens.filter(item => item.preco > 50).length;
-const subtotalCentavos = Math.round(subtotal * 100);
-const gorjetaCentavos = Math.round(subtotalCentavos * conta.gorjeta / 100);
+const subtotalCentavos = paraCentavos(subtotal);
+const gorjetaCentavos = calcularGorjeta(subtotalCentavos, conta.gorjeta);
 const totalCentavos = subtotalCentavos + gorjetaCentavos;
 const porpessoa = Math.floor(totalCentavos / conta.pessoas);
 const porsobra = (totalCentavos%conta.pessoas);
-
 
 
 console.log(pc.bold('Racha-conta:'), pc.yellow(conta.restaurante)); 
